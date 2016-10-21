@@ -1,32 +1,32 @@
 <TycoopolisContracts version="1">
-	<contract>
-		<name>TestContract</name>
-		<partner>TestPartner</partner>
-		<start>20.10.2016 00:00:00</start>
-		<end>25.10.2016 00:00:00</end>
-		<period>1</period>
-		<product>Testproduct</product>
-		<quantity>10</quantity>
-		<unit>Stk</unit>
-		<price>10.50</price>
-		<direction>1</direction>
-		<destination>0001</destination>
-		<description>Moin Moin</description>
-		<deliveryChecks>110100</deliveryChecks>
-	</contract>
-	<contract>
-		<name>TestContract2</name>
-		<partner>TestPartner</partner>
-		<start>20.10.2016 00:00:00</start>
-		<end>25.10.2016 00:00:00</end>
-		<period>1</period>
-		<product>Testproduct</product>
-		<quantity>10</quantity>
-		<unit>Stk</unit>
-		<price>10.50</price>
-		<direction>1</direction>
-		<destination>0001</destination>
-		<description>Moin Moin</description>
-		<deliveryChecks>111000</deliveryChecks>
-	</contract>
+  <contract>
+    <name>TestContract</name>
+    <partner>TestPartner</partner>
+    <start>20.10.2016 00:00:00</start>
+    <end>25.10.2016 00:00:00</end>
+    <period>2</period>
+    <product>Testproduct</product>
+    <quantity>10</quantity>
+    <unit>Stk</unit>
+    <price>10.5</price>
+    <direction>1</direction>
+    <destination>0001</destination>
+    <description>Moin Moin</description>
+    <deliveryChecks>110100</deliveryChecks>
+  </contract>
+  <contract>
+    <name>TestContract2</name>
+    <partner>TestPartner</partner>
+    <start>20.10.2016 00:00:00</start>
+    <end>25.10.2016 00:00:00</end>
+    <period>1</period>
+    <product>Testproduct</product>
+    <quantity>10</quantity>
+    <unit>Stk</unit>
+    <price>10.5</price>
+    <direction>1</direction>
+    <destination>0001</destination>
+    <description>Moin Moin</description>
+    <deliveryChecks>111000</deliveryChecks>
+  </contract>
 </TycoopolisContracts>

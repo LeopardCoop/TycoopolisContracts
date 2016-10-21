@@ -169,7 +169,7 @@ namespace TycoopolisContracts
         {
             foreach (Contract c in contracts)
             {
-                if (c.Name == name)
+                if (c.Name == name && contracts[lstOverview.SelectedIndex] != c)//if name already exist(excluded himself)
                 {
                     return true;
                 }
