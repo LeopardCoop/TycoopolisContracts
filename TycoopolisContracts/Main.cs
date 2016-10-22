@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,19 +14,37 @@ namespace TycoopolisContracts
 {
     public partial class frmMain : Form
     {
+        //consts(more or less :P)
         const int tycoopolisContractsVersion = 1;//verion of xml-schema
+        String optionsPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\TycoopolisContracts"; 
 
+
+        //data
         List<Contract> contracts = new List<Contract>();
         List<int> contractLinks = new List<int>();//Give for every element in the todo-list the index of the contract
         List<int> deliveryDayIndex = new List<int>();//Give for every element in the todo-list the index of the specific deliveryDay
+
+
+        //background-vars
+        Options options;
         bool updateMode = false;//In the updateMode nothing will be write in the contracts(need for clstTodo_ItemCheck)
+
 
         public frmMain()
         {
-            loadFromData();
+            loadOptions();
+            try
+            {
+                loadFromData();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("No data could be loaded! \n" + ex.Message, "loading data failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
             InitializeComponent();
             updateTodo();
         }
+
 
         //MENUE
         private void contractsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -43,12 +62,23 @@ namespace TycoopolisContracts
             }
             updateTodo();
         }
+        private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Options newOptions = OptionsWindow.Show(options);
+            if (newOptions != options)//if some options changed
+            {
+                options = newOptions;
+                saveOptions();
+            }
+        }
+
 
         //CALENDER
         private void cldCalender_DateChanged(object sender, DateRangeEventArgs e)//date choice
         {
             updateTodo();
         }
+
 
         //TODO'S
         private void updateTodo()//insert the todos of the selected day
@@ -100,8 +130,92 @@ namespace TycoopolisContracts
             saveToData();
         }
 
+
         //BACKGROUND-FUNCTIONS
-        private void saveToData()
+        private void loadOptions()//load the options
+        {
+            //if the options don't exist, create them
+            if(!Directory.Exists(optionsPath))
+            {
+                Directory.CreateDirectory(optionsPath);
+            }
+            if(!File.Exists(optionsPath + "\\Options.xml"))
+            {
+                XmlDocument doc = new XmlDocument();
+
+                XmlNode savePath = doc.CreateNode(XmlNodeType.Element, "SavePath", "");
+                savePath.InnerText = optionsPath;
+                doc.AppendChild(savePath);
+
+                doc.Save(optionsPath + "\\Options.xml");
+            }
+
+            //load the options
+            XmlDocument optionsXml = new XmlDocument();
+            options = new Options();
+
+            optionsXml.Load(optionsPath + "\\Options.xml");
+
+            foreach(XmlNode option in optionsXml.ChildNodes)
+            {
+                switch(option.Name)
+                {
+                    case "SavePath":
+                        options.savePath = option.InnerText;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        private void saveOptions()//save the options
+        {
+            XmlDocument doc = new XmlDocument();
+
+            XmlNode savePath = doc.CreateNode(XmlNodeType.Element, "SavePath", "");
+            savePath.InnerText = options.savePath;
+            doc.AppendChild(savePath);
+
+            doc.Save(optionsPath + "\\Options.xml");
+
+            //Save the data to the new locations(or old locations)
+            saveToData();
+        }
+        private void loadFromData()//load contracts
+        {
+            if (!File.Exists(options.savePath + "\\Save.xml"))//if no save exist, create a "raw-save"
+            {
+                XmlDocument startDoc = new XmlDocument();
+                XmlNode stRoot = startDoc.CreateElement("TycoopolisContracts");
+                XmlAttribute stVersion = startDoc.CreateAttribute("version");
+                stVersion.Value = tycoopolisContractsVersion.ToString();
+                stRoot.Attributes.Append(stVersion);
+                startDoc.AppendChild(stRoot);
+                startDoc.Save(options.savePath + "\\Save.xml");
+            }
+
+
+            XmlDocument data = new XmlDocument();
+            data.Load(options.savePath + "\\Save.xml");
+            XmlNode root = data.ChildNodes[0];
+
+
+            //check the version and convert if it is necessary and possible
+            int version = Convert.ToInt32(root.Attributes["version"].Value);
+            if (version != tycoopolisContractsVersion)
+            {
+                convertDataToCurVersion(data, version);
+                return;//abort this load-try
+            }
+
+
+            //load
+            foreach (XmlNode xmlContract in root.ChildNodes)
+            {
+                contracts.Add(Contract.load(xmlContract));
+            }
+        }
+        private void saveToData()//save contracts
         {
             XmlDocument data = new XmlDocument();
 
@@ -118,37 +232,9 @@ namespace TycoopolisContracts
 
             data.AppendChild(root);//packing all into the document
 
-            data.Save(Application.StartupPath + "\\Contracts.xml");//save on harddisk
+            data.Save(options.savePath + "\\Save.xml");//save on harddisk
         }
-        private void loadFromData()
-        {
-            try
-            {
-                XmlDocument data = new XmlDocument();
-                data.Load(Application.StartupPath + "\\Contracts.xml");
-                XmlNode root = data.ChildNodes[0];
-
-
-                //check the version and convert if it is necessary and possible
-                int version = Convert.ToInt32(root.Attributes["version"].Value);
-                if (version != tycoopolisContractsVersion)
-                {
-                    convertDataToCurVersion(data, version);
-                    return;//abort this load-try
-                }
-
-
-                //load
-                foreach(XmlNode xmlContract in root.ChildNodes)
-                {
-                    contracts.Add(Contract.load(xmlContract));
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(Convert.ToString(DateTime.Today));
-            }
-        }
+        
         private void convertDataToCurVersion(XmlDocument data, int version)//convert xml if it is possible
         {
             switch (version)
@@ -160,6 +246,6 @@ namespace TycoopolisContracts
                     return;
             }
             loadFromData();//try to load again, if the convert was possible
-        }
+        }  
     }
 }

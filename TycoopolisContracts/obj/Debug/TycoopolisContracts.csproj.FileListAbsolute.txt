@@ -18,3 +18,4 @@ C:\Users\Nils\Desktop\Project-TycoopolisContracts\TycoopolisContracts\Tycoopolis
 C:\Users\Nils\Desktop\Project-TycoopolisContracts\TycoopolisContracts\TycoopolisContracts\obj\Debug\TycoopolisContracts.frmMain.resources
 C:\Users\Nils\Desktop\Project-TycoopolisContracts\TycoopolisContracts\TycoopolisContracts\obj\Debug\TycoopolisContracts.Properties.Resources.resources
 C:\Users\Nils\Desktop\Project-TycoopolisContracts\TycoopolisContracts\TycoopolisContracts\obj\Debug\TycoopolisContracts.csproj.GenerateResource.Cache
+D:\Arbeitsmaterialien\Arbeitsmaterial\Programmieren\CSharp\Project-TycoopolisContracts\TycoopolisContracts\TycoopolisContracts\obj\Debug\TycoopolisContracts.OptionsWindow.resources
